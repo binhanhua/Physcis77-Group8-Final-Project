@@ -52,15 +52,154 @@ def two_decks(num):
     player = Player.Player(num)
     dealer = Player.Player(num, True)
     deck.shuffle()
-    print(deck.cards[0].value)
-
+    start_turn(player, dealer, deck)
 
 def four_decks(num):
     deck = PlayDeck(4)
     player = Player(num)
     dealer = Player(num, True)
     deck.shuffle()
-    print(deck.cards[0].value)
+
+def start_turn(player, dealer, deck):
+    """
+    This function plays a complete turn of Blackjack
+    """
+    #If the player runs out of money, the program ends.
+    if player.money <= 0:
+        print("Sorry " + name + ", you are broke and can no longer play.")
+        conclude(player)
+        exit()
+
+    bet = bet_amount(player)
+    #The player and the dealer take out the same amount of bet.
+    player.take_out(bet)
+    dealer.take_out(bet)
+    print("Burn a card")
+    deck.draw()
+    print("Dealing the cards")
+    player.hand.append(deck.draw())
+    dealer.hand.append(deck.draw())
+    player.hand.append(deck.draw())
+    dealer.hand.append(deck.draw())
+    print("The dealer has one card hidden and a " + str(dealer.hand[1]))
+    player.print_hand()
+
+    #Player's turn.
+    hit(player, deck)
+
+    #Dealer's turn.
+    if player.busted():
+        print("The dealer wins")
+    else:
+        print("Onto the dealer now.")
+        while dealer.sum_hand() < 17:
+            print("The dealer decides to hit.")
+            dealer.hit(deck)
+            dealer.print_hand()
+            if dealer.busted():
+                print("The dealer busted. You won this hand!")
+                player.money += 2 * bet
+                break
+            if dealer.sum_hand() >= 17:
+                print('The dealer decides to stand.')
+                break
+        if dealer.busted():
+            pass
+        else:
+            announce(player, dealer, bet)
+    print("You now have {} dollars".format(player.money))
+
+    #Ask the player if they want to keep playing
+    keep_playing = input('Do you want to keep playing? (Y/N) ')
+    if keep_playing in ['yes', 'Yes', 'y', 'Y']:
+        player.clear_hand()
+        dealer.clear_hand()
+        start_turn(player, dealer, deck)
+    else:
+        conclude(player)
+        exit()
+
+def conclude(player):
+    print("Thanks for playing!")
+    new_str = "You started with " + str(player.starting_fund) + " dollars"
+    if player.money == player.starting_fund:
+        new_str += " and didn't lose anything. Good job!"
+    if player.money < player.starting_fund:
+        new_str += " and lost "+ str(player.starting_fund - player.money) + " dollars. Better luck next time."
+    if player.money > player.starting_fund:
+        new_str += " and won " + str(player.starting_fund - player.money) + " dollars. You're awesome."
+    print(new_str)
+
+
+
+def announce(player, dealer, bet):
+    player_score = player.sum_hand()
+    dealer_score = dealer.sum_hand()
+    print("The player has a score of {}".format(player_score))
+    print("The dealer has a score of {}".format(dealer_score))
+    if player_score == dealer_score:
+        print("It's a draw!")
+        player.money += bet
+        dealer.money += bet
+    elif player_score > dealer_score:
+        print("You won!")
+        player.money += 2 * bet
+    else:
+        print("Dealer wins.")
+
+
+
+
+
+def hit(player, deck):
+    answer = input('Do you want to hit? (Y/N) ')
+    if answer in ['yes', 'Yes', 'y', 'Y']:
+        hit_card = deck.cards[0]
+        print("Your new card is " + str(hit_card))
+        player.hit(deck)
+        player.print_hand()
+        if player.busted():
+            print("Sorry, you busted")
+        else:
+            hit(player, deck)
+    else:
+        pass
+
+
+def bet_amount(player):
+    """
+    This functions determine the amount of bet the player wants to bet and
+    account for false inputs
+    """
+    bet = input("How much do you want to bet? ")
+    while not is_int(bet):
+        print("The bet must be an integer")
+        bet = input("How much do you want to bet? ")
+    bet = int(bet)
+
+    #After legal input of bet, determine if the amount of bet is within limits
+    #use recursion to force a bet within limit.
+    if bet > player.money or bet < MIN_BET or bet > MAX_BET:
+        if bet > player.money:
+            print('You do not have enough money.')
+        elif bet < MIN_BET:
+            print('You must bet more.')
+        elif bet > MAX_BET:
+            print('You must bet less')
+        bet = bet_amount(player)
+
+    return bet
+
+def is_int(s):
+    """
+    This function determines if a string is the string of an integer.
+    """
+    try:
+        int(s)
+        return True
+    except ValueError:
+        return False
+
 
 ##########
 ###Main###

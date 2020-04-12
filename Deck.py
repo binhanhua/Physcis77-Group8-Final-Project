@@ -20,6 +20,9 @@ class Card:
         else:
             self.value = int(self.face)
 
+    def __str__(self):
+        return self.face + " of " + self.suit
+
 
 class Deck:
     """An entire deck excluding jokers"""
