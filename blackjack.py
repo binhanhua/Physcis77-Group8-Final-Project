@@ -59,6 +59,7 @@ def four_decks(num):
     player = Player(num)
     dealer = Player(num, True)
     deck.shuffle()
+    start_turn(player, dealer, deck)
 
 def start_turn(player, dealer, deck):
     """
@@ -119,7 +120,11 @@ def start_turn(player, dealer, deck):
         conclude(player)
         exit()
 
+
 def conclude(player):
+    """
+    This comes at the end of each game and serves as a conclusion of one session.
+    """
     print("Thanks for playing!")
     new_str = "You started with " + str(player.starting_fund) + " dollars"
     if player.money == player.starting_fund:
@@ -133,6 +138,10 @@ def conclude(player):
 
 
 def announce(player, dealer, bet):
+    """
+    This function is called at the end of each term where no one has busted.
+    This announces who won the turn and adds the money proportionally.
+    """
     player_score = player.sum_hand()
     dealer_score = dealer.sum_hand()
     print("The player has a score of {}".format(player_score))
@@ -148,10 +157,11 @@ def announce(player, dealer, bet):
         print("Dealer wins.")
 
 
-
-
-
 def hit(player, deck):
+    """
+    This function utilizes the already implemented hit function in the Player class
+    and continues to ask the player until they choose to stop hitting.
+    """
     answer = input('Do you want to hit? (Y/N) ')
     if answer in ['yes', 'Yes', 'y', 'Y']:
         hit_card = deck.cards[0]
@@ -189,6 +199,8 @@ def bet_amount(player):
         bet = bet_amount(player)
 
     return bet
+
+
 
 def is_int(s):
     """
