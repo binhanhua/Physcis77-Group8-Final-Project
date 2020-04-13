@@ -32,7 +32,6 @@ def play():
     if deck_num in ['B', 'b']:
         #Asking for the desired starting fund
         money = input('How much money do you want to start with?\nA. 200 dollars\nB. 400 dollars\n')
-        print(money)
         if money in ['A', 'a']:
             four_decks(200)
         if money in ['B', 'b']:
@@ -55,9 +54,9 @@ def two_decks(num):
     start_turn(player, dealer, deck)
 
 def four_decks(num):
-    deck = PlayDeck(4)
-    player = Player(num)
-    dealer = Player(num, True)
+    deck = Deck.PlayDeck(4)
+    player = Player.Player(num)
+    dealer = Player.Player(num, True)
     deck.shuffle()
     start_turn(player, dealer, deck)
 
@@ -74,7 +73,6 @@ def start_turn(player, dealer, deck):
     bet = bet_amount(player)
     #The player and the dealer take out the same amount of bet.
     player.take_out(bet)
-    dealer.take_out(bet)
     print("Burn a card")
     deck.draw()
     print("Dealing the cards")
@@ -86,28 +84,32 @@ def start_turn(player, dealer, deck):
     player.print_hand()
 
     #Player's turn.
-    hit(player, deck)
-
-    #Dealer's turn.
-    if player.busted():
-        print("The dealer wins")
+    if player.sum_hand() == 21:
+        print("Congratulations! You hit a blackjack.")
+        player.money += 2.5 * bet
     else:
-        print("Onto the dealer now.")
-        while dealer.sum_hand() < 17:
-            print("The dealer decides to hit.")
-            dealer.hit(deck)
-            dealer.print_hand()
-            if dealer.busted():
-                print("The dealer busted. You won this hand!")
-                player.money += 2 * bet
-                break
-            if dealer.sum_hand() >= 17:
-                print('The dealer decides to stand.')
-                break
-        if dealer.busted():
-            pass
+        hit(player, deck)
+
+        #Dealer's turn.
+        if player.busted():
+            print("The dealer wins")
         else:
-            announce(player, dealer, bet)
+            print("Onto the dealer now.")
+            while dealer.sum_hand() < 17:
+                print("The dealer decides to hit.")
+                dealer.hit(deck)
+                dealer.print_hand()
+                if dealer.busted():
+                    print("The dealer busted. You won this hand!")
+                    player.money += 2 * bet
+                    break
+                if dealer.sum_hand() >= 17:
+                    print('The dealer decides to stand.')
+                    break
+            if dealer.busted():
+                pass
+            else:
+                announce(player, dealer, bet)
     print("You now have {} dollars".format(player.money))
 
     #Ask the player if they want to keep playing
