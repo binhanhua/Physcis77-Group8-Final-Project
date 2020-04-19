@@ -36,6 +36,7 @@ class Deck:
             self.cards.append(Card(suit, 'A'))
             for i in range(2, 11):
                 self.cards.append(Card(suit, str(i)))
+                # All the cards are in a class
             for face in ('J', 'Q', 'K'):
                 self.cards.append(Card(suit, face))
 
@@ -47,18 +48,30 @@ class PlayDeck:
         """
         num -- a integer; tells how many decks of cards we would use.
         """
+        self.num_of_deck = num
         self.cards = []
-        for i in range(num):
+        for i in range(self.num_of_deck):
             self.cards.extend(Deck().cards)
 
     def draw(self):
         """
         This function removes and returns the first card of the entire deck.
         """
-        return self.cards.pop(0)
+        return self.cards.pop(0) #This function basically removes the first card in this list
+
 
     def shuffle(self):
         """
         This function shuffles the entire playing deck.
         """
+        random.shuffle(self.cards)
+
+
+    def reshuffle(self):
+        """
+        This function reshuffles the entire deck.
+        """
+        self.cards = []
+        for i in range(self.num_of_deck):
+            self.cards.extend(Deck().cards)
         random.shuffle(self.cards)
