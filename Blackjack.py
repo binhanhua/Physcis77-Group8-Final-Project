@@ -227,17 +227,39 @@ def announce(player, dealer):
     This announces who won the turn and adds the money proportionally.
     """
     player_score = player.sum_hand()
+    player_split_score = player.sum_split_hand()
     dealer_score = dealer.sum_hand()
-    print("The player has a score of {}".format(player_score))
-    print("The dealer has a score of {}".format(dealer_score))
-    if player_score == dealer_score:
-        print("It's a draw!")
-        player.take_in(player.bet)
-    elif player_score > dealer_score:
-        print("You won!")
-        player.take_in(2 * player.bet)
+    if not player.split:
+        print("The player's first hand has a score of {}.".format(player_score))
+        print("The dealer has a score of {}.".format(dealer_score))
+        if player_score == dealer_score:
+            print("It's a draw!")
+            player.take_in(player.bet)
+        elif player_score > dealer_score:
+            print("You won!")
+            player.take_in(2 * player.bet)
+        else:
+            print("Dealer wins.")
     else:
-        print("Dealer wins.")
+        print("The player's first hand has a score of {}.".format(player_score))
+        print("The player's second hand has a score of {}.".format(player_split_score))
+        print("The dealer has a score of {}.".format(dealer_score))
+        if player_score == dealer_score:
+            print("It's a draw for the first hand!")
+            player.take_in(0.5 * player.bet)
+        if player_score > dealer_score:
+            print("You won the first hand!")
+            player.take_in(player.bet)
+        if player_score < dealer_score:
+            print("The dealer wins the first hand.")
+        if player_split_score == dealer_score:
+            print("It's a draw for the second hand!")
+            player.take_in(0.5 * player.bet)
+        if player_split_score > dealer_score:
+            print("You won the second hand!")
+            player.take_in(player.bet)
+        if player_split_score < dealer_score:
+            print("The dealer wins the second hand.")
 
 
 def hit(player, deck):
