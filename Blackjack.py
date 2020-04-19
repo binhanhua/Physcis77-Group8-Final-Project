@@ -44,6 +44,7 @@ def play():
         print("That's not a choice!")
         play()
 
+
 def two_decks(num):
     """
     As the name suggests, this function starts the game with two decks of cards.
@@ -54,6 +55,7 @@ def two_decks(num):
     deck.shuffle()
     start_turn(player, dealer, deck)
 
+
 def four_decks(num):
     """
     As the name suggests, this function starts the game with four decks of cards.
@@ -63,6 +65,7 @@ def four_decks(num):
     dealer = Player.Player(num, True)
     deck.shuffle()
     start_turn(player, dealer, deck)
+
 
 def start_turn(player, dealer, deck):
     """
@@ -242,8 +245,8 @@ def hit(player, deck):
     This function utilizes the already implemented hit function in the Player class
     and continues to ask the player until they choose to stop hitting.
     """
-    #Ask if the player wants to split if there
-    if player.hand[0].value == player.hand[1].value:
+    #Ask if the player wants to split here
+    if player.hand[0].face == player.hand[1].face:
         split(player, deck)
 
     if player.split:
@@ -308,6 +311,11 @@ def split(player, deck):
             print("You decided to split")
             #Modify the instance variable
             player.split = True
+            if player.hand[0].face == "A":
+                # Earlier sum_hand function changes the value of the Ace. Here I change
+                # it back when the player wants to split.
+                player.hand[0].value = 11
+                player.hand[1].value = 11
             #increase the player's bet.
             player.take_out(player.bet)
             player.bet *= 2

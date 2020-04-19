@@ -44,7 +44,7 @@ class Player:
         """
         if self.dealer == False:
             new_str = "You have a "
-        elif self.dealer == True:
+        else:
             new_str = "The dealer has a "
         if len(self.hand) == 0:
             new_str = 'You do not have any card.'
@@ -58,6 +58,34 @@ class Player:
             new_str = new_str + " and a " + str(self.hand[-1]) #The last card
 
         print(new_str)
+        points = self.sum_hand()
+        if self.dealer == False:
+            new_str = "You have " + str(points) + " points."
+        else:
+            new_str = "The dealer has " + str(points) + " points."
+        contains_Ace = False
+        for card in self.hand:
+            if card.face == 'A':
+                contains_Ace = True
+        if contains_Ace:
+            if self.softness():
+                new_str = new_str + " And this hand is soft."
+            else:
+                new_str = new_str + " And this hand is hard."
+        print(new_str)
+
+
+    def softness(self):
+        """
+        This function takes in a hand and returns True if it is soft, and False
+        if it is hard.
+        Soft is defined as having at least one card with value 11.
+        """
+        soft = False
+        for card in self.hand:
+            if card.value == 11:
+                soft = True
+        return soft
 
 
     def print_split_hand(self):
