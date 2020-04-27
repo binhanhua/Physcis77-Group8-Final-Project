@@ -18,7 +18,15 @@ class Player:
         self.dealer = dealer
         self.split = False
         self.bet = 0
+        self.split_bet = 0
         self.insured = False
+        self.double_hand = False
+        self.double_split_hand = False
+        self.is_stand = False
+        self.is_split_stand = False
+        self.is_hit = True
+        self.is_split_hit = True
+
         if self.dealer:
             self.money = math.inf
 
@@ -60,7 +68,10 @@ class Player:
         print(new_str)
         points = self.sum_hand()
         if self.dealer == False:
-            new_str = "You have " + str(points) + " points."
+            if points == 21 and len(self.hand) != 2:
+                new_str = "Awesome! You have 21 points!"
+            else:
+                new_str = "You have " + str(points) + " points"
         else:
             new_str = "The dealer has " + str(points) + " points."
         contains_Ace = False
@@ -87,12 +98,24 @@ class Player:
                 soft = True
         return soft
 
+    def split_softness(self):
+        """
+        This function takes in a hand and returns True if it is soft, and False
+        if it is hard.
+        Soft is defined as having at least one card with value 11.
+        """
+        split_soft = False
+        for card in self.split_hand:
+            if card.value == 11:
+                split_soft = True
+        return split_soft
+
 
     def print_split_hand(self):
         """
-        This function prints the hand.
+        This function prints the split hand.
         """
-        new_str = "As for the split hand,\nYou have a "
+        new_str = "You have a "
         if len(self.split_hand) == 0:
             new_str = 'As for the split hand, You do not have any card.'
         elif len(self.split_hand) == 1:
@@ -105,7 +128,22 @@ class Player:
             new_str = new_str + " and a " + str(self.split_hand[-1]) #The last card
 
         print(new_str)
-
+        points = self.sum_split_hand()
+        if self.dealer == False:
+            if points == 21 and len(self.hand) != 2:
+                new_str = "Awesome! You have 21 points!"
+            else:
+                new_str = "You have " + str(points) + " points"
+        contains_Ace = False
+        for card in self.split_hand:
+            if card.face == 'A':
+                contains_Ace = True
+        if contains_Ace:
+            if self.split_softness():
+                new_str = new_str + " And this hand is soft."
+            else:
+                new_str = new_str + " And this hand is hard."
+        print(new_str)
 
     def sum_hand(self):
         """
@@ -126,14 +164,14 @@ class Player:
         """
         This function calculates the value fo the split sum_hand
         """
-        sum = 0
+        sum_split = 0
         for card in self.split_hand:
-            sum += card.value
-        if sum > 21:
-            for card in self.hand:
+            sum_split += card.value
+        if sum_split > 21:
+            for card in self.split_hand:
                 if card.value == 11:
                     card.value = 1
-                    sum -= 10
+                    sum_split -= 10
         return sum_split
 
 
@@ -184,7 +222,14 @@ class Player:
         I do not know how to type Italic letters here.
         """
         self.bet = 0
+        self.split_bet = 0
         self.split = False
         self.insured = False
         self.hand = []
         self.split_hand = []
+        self.double_hand = False
+        self.double_split_hand = False
+        self.is_stand = False
+        self.is_split_stand = False
+        self.is_hit = False
+        self.is_split_hit = False
